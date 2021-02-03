@@ -1,0 +1,151 @@
+---
+title: "Descriptive Statistics (EDA) Quiz"
+author: "Seth Kimpler"
+date: '`r format(Sys.time(), "%A %D @ %I:%M %p")`'
+output: 
+  html_document: 
+    toc: true
+    toc_depth: 4
+---
+
+<hr>
+
+## Packages
+```{r}
+library(tidyverse)
+```
+
+## Datasets
+```{r}
+GaltonHeight <- read_csv(file = url("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/galtonheightdata.csv"))
+
+GaltonParentHeight <- read_csv(file = url("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/galtonparentheights.csv"))
+
+Monopoly <- read_csv(file = url("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/monopolygame.csv"))
+
+VietnamDraft <- read_csv(file = url("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/vietnamdraft.csv"))
+
+VietnamDraftAdmin <- read_csv(file = url("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/vietnamdraftadmin.csv"))
+
+WCSWeatherDays <- read_csv(file = url("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/wcsweatherdays.csv"))
+```
+
+```{r globaloptions, include = FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, comment = NA)
+```
+
+
+### Question 1
+```{r}
+#mean days canceled
+WCSWeatherDays %>%
+  summarize(mean(total_days))
+
+#standard deviation
+WCSWeatherDays %>%
+  summarize(sd(total_days))
+
+#show min, quartiles, max
+WCSWeatherDays %>%
+  summarize(quantile(total_days))
+
+#interquartile range = 75 percentile - 25 percentile
+18 - 10
+
+#range = max - min
+39 - 4
+
+#total days missed across all years
+WCSWeatherDays %>%
+  summarize(sum(total_days))
+
+#years with >10 days missed
+WCSWeatherDays %>%
+  filter(total_days > 10) %>%
+  nrow()
+
+#use boxplot to show outliers
+ggplot(WCSWeatherDays, aes(y = total_days)) + 
+  geom_boxplot()
+```
+
+### Question 2
+```{r}
+# make calculations for n, mean and sd, grouped by type
+Monopoly %>%
+  group_by(type) %>%
+  summarize(meanCost = mean(cost), sd = sd(cost))
+
+# same calculations, but over all properties
+Monopoly %>%
+  summarize(meanCost = mean(cost), sd = sd(cost))
+```
+
+### Question 3
+```{r}
+# Total number of entries
+GaltonHeight %>%
+  nrow()
+
+# Largest family 
+GaltonHeight %>%
+  summarize(max(Kids))
+
+# Summarize by gender
+GaltonHeight %>%
+  group_by(Gender) %>%
+  summarize(meanHeight = mean(Height), sd = sd(Height), quantile(Height))
+
+# Transmuted Height
+GaltonHeight %>%
+  filter(Gender == "Female")%>%
+  summarize(quantile(Height) * 1.08)
+
+
+```
+
+### Question 4
+```{r}
+# first half of year
+firstHalf <- VietnamDraft %>%
+  filter(draftyear == 1970, month <= 6) 
+firstHalf %>%
+  summarize(meanDraftNumberSecond = mean(draftnumber))
+nrow(firstHalf)
+
+# percent under number 195
+firstHalf %>%
+  filter(draftnumber <= 195) %>%
+  nrow() / nrow(firstHalf)
+
+
+# second half of year
+secondHalf <- VietnamDraft %>%
+  filter(draftyear == 1970, month > 6)
+secondHalf %>%
+  summarize(meanDraftNumberFirst = mean(draftnumber))
+nrow(secondHalf)
+
+# percent under number 195
+secondHalf %>%
+  filter(draftnumber <= 195) %>%
+  nrow() / nrow(secondHalf)
+
+# overall
+VietnamDraft %>%
+  filter(draftyear == 1970) %>%
+  summarize(meanDraftNumberOverall = mean(draftnumber))
+
+# percent under number 195
+VietnamDraft %>%
+  filter(draftyear == 1970, draftnumber <= 195) %>%
+  nrow() 
+  
+```
+
+
+<hr>
+
+```{r}
+sessionInfo()
+```
