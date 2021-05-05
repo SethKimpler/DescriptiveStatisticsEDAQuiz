@@ -1,0 +1,82 @@
+---
+title: "Project 2: Binomial Problem"
+author: "Seth Kimpler"
+date: '`r format(Sys.time(), "%A, %B %d, %Y @ %I:%M %p")`'
+output: 
+  html_document: 
+    theme: yeti
+    highlight: textmate
+---
+
+```{r globalopts, include = FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, comment = NA)
+```
+
+### **Packages**
+
+Load the packages here.
+
+```{r}
+library("dplyr")
+library("ggplot2")
+```
+
+***
+### **Problem**
+
+A professor gives her class a multiple-choice quiz with ten questions. Each question has four possible answers. A student who did not study for the quiz randomly chooses an answer for each question. Let X be the number of questions he or she gets correct on the quiz. This process can be modeled with a binomial distribution. 
+
+#### **Part A**
+
+Compute the expected value and variance of X.
+
+```{r}
+X <- rbinom(10000, 10, .25)
+ex_val <- mean(X)
+var <- var(X)
+```
+
+#### **Part B**
+
+Create a plot of the probability mass function (pmf) of X.
+
+```{r}
+ggplot(mapping = aes(x = X * 10)) + geom_bar() + labs(title = "PMF of X", x = "Score on Test", y = "Frequency out of 10000 Trials")
+```
+
+#### **Part C**
+
+What is the probability that the student passes the quiz, if 60% correct is passing?
+
+```{r}
+1 - pbinom(4, 10, .25)
+```
+
+#### **Part D**
+
+Suppose that, on each question, the student can eliminate two of the possible answers as being definitely wrong. After eliminating them, he or she then randomly chooses between the two answers that are left. What is the probability that the student passes the quiz, if 60% correct is passing?
+
+```{r}
+1 - pbinom(4, 10, .5)
+``` 
+
+#### **Questions**
+
+One strategy people often say to use on multiple choice tests is to always choose "C" if you have to guess. Suppose the student in this problem used that method. Could we still model the probability with a binomial distribution? Is there anything else you would need to know about the quiz to decide? Discuss. 
+
+**ANSWER:** No. You would need to know if the answers were equally distributed between A, B, C, and D. If they were, then the strategy of only answering C would fail, and we could expect the student to score a 25. If the distrubtion was not equal, however, and favored one letter answer over the others, then the strategy of only answering C could potentially be successful, if the distribution of answers favored C.
+
+
+Suppose the student could eliminate two of the possible answers on some questions but not on others. Could we still model the probability with a binomial distribution? Discuss.
+
+**ANSWER:** Assuming both remaining answers are equally likely to be correct, then yes, it could still be modeled with a binomial distribution. It would be no different than modeling the number of heads or tails on a flipped fair coin. As in the first question though, if the answers were not equally likely to be correct, then a binomial distribution could not be used for modeling random guessing, only for selecting a single answer throughout the test. 
+
+
+***
+### Session Info
+
+**Names of Collaborators**:
+
+```{r}
+sessionInfo()
+```
